@@ -37,8 +37,9 @@
 
     <Modal v-show="modalVisibility" @close="hideModal"></Modal>
 
-    <div id='connections-panel'>
-
+    <div id="chart-panel">
+      <!-- <CircuitsConnection /> -->
+      <Chart :width="850" :height="680"/>
     </div>
     <div id='results'>
 
@@ -53,6 +54,7 @@ import PiType from './components/PiType'
 import Upload from './components/Upload'
 import ElementForm from './components/ElementForm'
 import Modal from './components/Modal'
+import Chart from './components/Chart'
 
 export default {
   name: 'App',
@@ -61,7 +63,8 @@ export default {
     // TType
     Upload,
     ElementForm,
-    Modal
+    Modal,
+    Chart
   },
   data() {
     return {
@@ -127,6 +130,7 @@ export default {
     },
 
     sendSingleNetwork() {
+      // TODO: HERE CHANGE THE BACKEND URL
       this.$http.post('www.test.com/test', {
         elements: {
           left: this.leftElements,
@@ -186,12 +190,24 @@ export default {
 
   #circuit-panel {
     margin-top: -20px;
-    width: 50%;
+    width: 45%;
     height: 690px;
     text-align: center;
     background: #fff;
     padding: 40px 0px 20px 0px;
     border-radius: 50px;
+    float: left;
+  }
+
+  #chart-panel {
+    margin-top: -20px;
+    width: 45%;
+    height: 690px;
+    text-align: center;
+    background: #fff;
+    padding: 40px 0px 20px 0px;
+    border-radius: 50px;
+    float: right;
   }
 
   .form-buttons{
