@@ -3,34 +3,41 @@
     <form enctype="multipart/form-data" novalidate v-if="isInitial || isSaving">
       <h1>Upload SPICE netlist</h1>
       <div class="dropbox">
-        <input type="file" :name="uploadFieldName" :disabled="isSaving" @change="filesChange($event.target.name, $event.target.files)" accept="image/*" class="input-file">
+        <input type="file" :name="uploadFieldName" :disabled="isSaving" @change="filesChange($event.target.name,
+        $event.target.files)" accept="*/*" class="input-file">
         <p v-if="isInitial">
           Drag your file here to begin<br> or click to browse
         </p>
       </div>
     </form>
+
+    <Modal v-show="modalVisibility" @close="hideModal" @send-params="sendData"></Modal>
   </div>
 </template>
 
 <script>
+  import Modal from './Modal'
 
   const STATUS_INITIAL = 0, STATUS_SAVING = 1, STATUS_SUCCESS = 2, STATUS_FAILED = 3;
 
   export default {
     name: 'Upload',
+    components: { Modal },
+
     data() {
       return {
         uploadedFiles: [],
         uploadError: null,
         currentStatus: null,
-        uploadFieldName: 'photos'
+        uploadFieldName: 'netlist',
+        modalVisibility: false,
+        params: new FormData()
       }
     },
     computed: {
       isInitial() {
         return this.currentStatus === STATUS_INITIAL;
-      },
-      isSaving() {
+      }, isSaving() {
         return this.currentStatus === STATUS_SAVING;
       },
       isSuccess() {
@@ -41,6 +48,14 @@
       }
     },
     methods: {
+
+    showModal() {
+      this.modalVisibility = true;
+    },
+
+    hideModal() {
+      this.modalVisibility = false;
+    },
       reset() {
         // reset form to initial state
         this.currentStatus = STATUS_INITIAL;
@@ -48,8 +63,7 @@
         this.uploadError = null;
       },
       save(formData) {
-        // upload data to the server
-        const BASE_URL = 'www.test.com/testUpload';
+        const BASE_URL = 'http://127.0.0.1:3000/upload';
         this.currentStatus = STATUS_SAVING;
 
         this.$http.post(BASE_URL, formData)
@@ -74,7 +88,7 @@
       },
       filesChange(fieldName, fileList) {
         // handle file changes
-        const formData = new FormData();
+        // const formData = new FormData();
 
         if (!fileList.length) return;
 
@@ -82,11 +96,16 @@
         Array
           .from(Array(fileList.length).keys())
           .map(x => {
-            formData.append(fieldName, fileList[x], fileList[x].name);
+            this.params.append(fieldName, fileList[x], fileList[x].name);
           });
 
-        // save it
-        this.save(formData);
+          this.showModal();
+      },
+      sendData(values) {
+        for (var key in values) {
+          this.params.append(key, values[key]);
+        }
+        this.save(this.params);
       }
     },
     mounted() {

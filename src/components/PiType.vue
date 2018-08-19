@@ -48,10 +48,6 @@
         left: 0,
         right: 0,
 
-        configKonva: {
-          width: 800,
-          height: 430
-        },
         rectLeft: {
           x: 215,
           y: 60,
@@ -107,6 +103,14 @@
     },
 
     methods: {
+      calculateStage() {
+        let height = window.innerHeight
+        let width = window.innerWidth
+
+        let scalingFactor = width/height
+        return scalingFactor
+
+      },
       emitQuantity() {
         var quantities = {};
         quantities.left = this.left;
@@ -117,8 +121,25 @@
       }
     },
 
+    computed: {
+      configKonva: function() {
+        let windowHeight = window.innerHeight
+        let windowWidth = window.innerWidth
+
+        let scalingFactor = windowWidth/windowHeight
+        let width = 450 * scalingFactor
+        let height = 400
+
+        return {
+          width: width,
+          height: height
+        }
+      }
+    },
+
     watch: {
       left: function() {
+        console.log(window.innerWidth)
         var vm = this;
         vm.$refs.layer.getStage().draw();
 

@@ -29,18 +29,14 @@
         >
           <div name="body">
             <div class="labels">
-              <p>Circuit:</p>
+              <p>No. of points:</p>
               <p>Freq. range:</p>
             </div>
 
             <div class="values">
-              <select>
-                <option>a</option>
-                <option>b</option>
-                <option>c</option>
-              </select><br>
-              <input size="4"/>MHz<br>
-              <input size="4"/>MHz
+              <input v-model.number="points" id="points" size="4"><br>
+              <input v-model.number="start" size="4"/>MHz<br>
+              <input v-model.number="stop" size="4"/>MHz
             </div>
           </div>
         </section>
@@ -50,10 +46,10 @@
             <button
               type="button"
               class="btn-green"
-              @click="close"
+              @click="send"
               aria-label="Close modal"
             >
-              Close
+              Send
             </button>
           </div>
         </footer>
@@ -65,10 +61,28 @@
 <script>
   export default {
     name: 'Modal',
+    data() {
+      return {
+        start: 10,
+        stop: 11,
+        points: 100
+      }
+    },
 
     methods: {
       close() {
         this.$emit('close');
+      },
+      send() {
+        console.log('wysyla');
+        let simulation_parameters = {
+          start_frequency: this.start,
+          stop_frequency: this.stop,
+          points_count: this.points
+        }
+
+        this.$emit('send-params', simulation_parameters)
+        this.close();
       },
     },
   };
@@ -147,9 +161,10 @@
     text-align: left;
   }
 
-  .values select {
+  .values #points {
     margin-bottom: 16px;
     margin-top: 16px;
+    margin-left: -32px;
   }
 
   .values input {
