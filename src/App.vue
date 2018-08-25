@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <button v-on:click="showHelp">Help</button>
     <div id='circuit-panel'>
       <div class="scheme-type" @change="clearValues">
         <label>Pi</label><input type="radio" v-model="viewType" value="Pi">
@@ -31,6 +32,7 @@
     </div>
 
     <Modal v-show="modalVisibility" @close="hideModal" @send-params="sendKreatorData"></Modal>
+    <Help v-show="helpVisibility" @close="hideHelp"></Help>
 
     <div id="chart-panel">
       <Chart :width="850" :height="680"/>
@@ -49,6 +51,7 @@ import Upload from './components/Upload'
 import ElementForm from './components/ElementForm'
 import Modal from './components/Modal'
 import Chart from './components/Chart'
+import Help from './components/Help'
 
 export default {
   name: 'App',
@@ -58,7 +61,8 @@ export default {
     Upload,
     ElementForm,
     Modal,
-    Chart
+    Chart,
+    Help
   },
   data() {
     return {
@@ -70,6 +74,7 @@ export default {
       middleElements: [],
       rightElements: [],
       modalVisibility: false,
+      helpVisibility: false,
       params: new FormData()
     }
   },
@@ -87,6 +92,14 @@ export default {
 
     hideModal() {
       this.modalVisibility = false;
+    },
+
+    showHelp() {
+      this.helpVisibility = true;
+    },
+
+    hideHelp() {
+      this.helpVisibility = false;
     },
 
     handleElementQuantities(values) {

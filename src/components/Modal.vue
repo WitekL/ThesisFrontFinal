@@ -74,7 +74,6 @@
         this.$emit('close');
       },
       send() {
-        console.log('wysyla');
         let simulation_parameters = {
           start_frequency: this.start,
           stop_frequency: this.stop,
