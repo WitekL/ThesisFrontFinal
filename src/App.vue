@@ -2,19 +2,15 @@
   <div id="app">
     <div id='circuit-panel'>
       <div class="scheme-type" @change="clearValues">
-        <label>Pi</label><input type="radio" v-model="x" value="Pi">
-        <label>T</label><input type="radio" v-model="x" value="T">
-        <label>Upload</label><input type="radio" v-model="x" value="Upload">
+        <label>Pi</label><input type="radio" v-model="viewType" value="Pi">
+        <label>T</label><input type="radio" v-model="viewType" value="T">
+        <label>Upload</label><input type="radio" v-model="viewType" value="Upload">
       </div>
-      <PiType v-if="x === 'Pi'" @element-quantities="handleElementQuantities($event)"></PiType>
-      <!-- <TType v-else></TType> -->
-      <Upload v-if="x === 'Upload'"></Upload>
+      <PiType v-if="viewType === 'Pi'" @element-quantities="handleElementQuantities($event)"></PiType>
+      <TType v-if="viewType === 'T'" @element-quantities="handleElementQuantities($event)"></TType>
+      <Upload v-if="viewType === 'Upload'"></Upload>
 
       <div class="formWrap">
-        <div class="nameWrap">
-          <label>Circuit name:</label>
-          <input name="name" v-model="circuitName"/>
-        </div>
         <div class="leftWrap">
           <h4 v-if="left > 0">Left branch</h4>
           <ElementForm @element-values='handleLeftElementValues($event, i)' class="leftForm" v-for="(n, i) in left" :key="30+n"/>
@@ -30,15 +26,13 @@
       </div>
 
       <div class="form-buttons">
-        <button v-on:click='saveCircuit' v-if='left>0 || right>0 || middle>0' type='button'>Save circuit</button>
-        <button v-on:click='showModal' v-if='connectionsNumber === 0 && (left>0 || right>0 || middle>0)' type='button'>Calculate</button>
+        <button v-on:click='showModal' v-if='left>0 || right>0 || middle>0' type='button'>Calculate</button>
       </div>
     </div>
 
-    <Modal v-show="modalVisibility" @close="hideModal"></Modal>
+    <Modal v-show="modalVisibility" @close="hideModal" @send-params="sendKreatorData"></Modal>
 
     <div id="chart-panel">
-      <!-- <CircuitsConnection /> -->
       <Chart :width="850" :height="680"/>
     </div>
     <div id='results'>
@@ -50,7 +44,7 @@
 
 <script>
 import PiType from './components/PiType'
-// import TType from './components/TType'
+import TType from './components/TType'
 import Upload from './components/Upload'
 import ElementForm from './components/ElementForm'
 import Modal from './components/Modal'
@@ -60,7 +54,7 @@ export default {
   name: 'App',
   components: {
     PiType,
-    // TType
+    TType,
     Upload,
     ElementForm,
     Modal,
@@ -68,19 +62,15 @@ export default {
   },
   data() {
     return {
-      x: 'Pi',
+      viewType: 'Pi',
       left: 0,
       middle: 0,
       right: 0,
       leftElements: [],
       middleElements: [],
       rightElements: [],
-      savedCircuit: [],
-      circuits: {},
-      circuitName: '',
-      connectionsNumber: 0,
-      connections: {},
-      modalVisibility: false
+      modalVisibility: false,
+      params: new FormData()
     }
   },
 
@@ -106,6 +96,7 @@ export default {
     },
 
     handleLeftElementValues(value, index) {
+      // tutaj z jakiegoś powodu znika rodzaj elementu
       this.leftElements[index] = value;
     },
 
@@ -117,25 +108,19 @@ export default {
       this.rightElements[index] = value;
     },
 
-    saveCircuit() {
-      this.savedCircuit.push(this.leftElements, this.middleElements, this.rightElements);
-      this.circuits[this.circuitName] = this.savedCircuit;
-
-      this.savedCircuit = {};
-      this.left = 0;
-      this.middle = 0;
-      this.right = 0;
-
-      this.connectionsNumber++
-    },
-
-    sendSingleNetwork() {
+    sendKreatorData(values) {
       // TODO: HERE CHANGE THE BACKEND URL
       this.$http.post('www.test.com/test', {
+        schehmatic: this.viewType,
         elements: {
           left: this.leftElements,
           middle: this.middleElements,
           right: this.rightElements
+        },
+        parameters: {
+          points_count: values['points_count'],
+          start_frequency: values['start_frequency'],
+          stop_frequency: values['stop_frequency']
         }
       })
         .then(function(response) {
@@ -158,7 +143,7 @@ export default {
   }
 
   .formWrap {
-    margin-left: 70px;
+    margin-left: 205px;
   }
 
   .nameWrap{
@@ -182,9 +167,6 @@ export default {
   }
 
   .scheme-type {
-    /*position: absolute;*/
-    /*left: 360px;*/
-    /*top: 25px;*/
     width: 85%;
   }
 
