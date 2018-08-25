@@ -42,11 +42,14 @@
 
 <script>
   export default {
+    name: "PiType",
     data() {
       return {
         middle: 0,
         left: 0,
         right: 0,
+        windowWidth: window.innerWidth,
+        windowHeight : window.innerHeight,
 
         rectLeft: {
           x: 215,
@@ -103,14 +106,6 @@
     },
 
     methods: {
-      calculateStage() {
-        let height = window.innerHeight
-        let width = window.innerWidth
-
-        let scalingFactor = width/height
-        return scalingFactor
-
-      },
       emitQuantity() {
         var quantities = {};
         quantities.left = this.left;
@@ -123,23 +118,24 @@
 
     computed: {
       configKonva: function() {
-        let windowHeight = window.innerHeight
-        let windowWidth = window.innerWidth
+        let windowHeight = this.windowHeight;
+        let windowWidth = this.windowWidth;
 
-        let scalingFactor = windowWidth/windowHeight
-        let width = 450 * scalingFactor
-        let height = 400
+        let scale = windowWidth/520;
+
+        let width = 250 * scale
+        let height = 120 * scale
 
         return {
           width: width,
-          height: height
+          height: height,
+          scale: { x: scale/4, y: scale/4 }
         }
       }
     },
 
     watch: {
       left: function() {
-        console.log(window.innerWidth)
         var vm = this;
         vm.$refs.layer.getStage().draw();
 
@@ -183,6 +179,13 @@
           vm.$refs.layer.getStage().draw();
         });
       }
+    },
+
+    mounted() {
+      window.addEventListener('resize', () => {
+        this.windowWidth = window.innerWidth;
+        this.windowHeight = window.innerHeight;
+      });
     }
   }
 </script>
@@ -193,8 +196,6 @@
   }
   #select {
     width: 90%;
-    /*position: absolute;*/
-    /*left: 350px;*/
   }
 
   .canvas {

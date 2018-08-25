@@ -28,10 +28,6 @@ import { Line } from 'vue-chartjs'
             borderColor: 'blue'
           }
         ]
-      },
-      {
-        responsive: false,
-        maintainAspectRatio: false
       })
     }
   }

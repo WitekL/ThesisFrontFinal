@@ -1,104 +1,57 @@
 <template>
   <div>
+    <div id="select">
+      <select class="left" v-model.number="left" v-on:change="emitQuantity">
+        <option value=0>0</option>
+        <option value=1>1</option>
+        <option value=2>2</option>
+        <option value=3>3</option>
+      </select>
 
-    <br />
-    <input v-model='circuitName' placeholder='Circuit name' />
-    <br />
+      <select class="middle" v-model.number="middle" v-on:change="emitQuantity">
+        <option value=0>0</option>
+        <option value=1>1</option>
+        <option value=2>2</option>
+        <option value=3>3</option>
+      </select>
 
-    <select class="left" v-model.number="left">
-      <option value=0>0</option>
-      <option value=1>1</option>
-      <option value=2>2</option>
-      <option value=3>3</option>
-    </select>
-
-    <select class="middle" v-model.number="middle">
-      <option value=0>0</option>
-      <option value=1>1</option>
-      <option value=2>2</option>
-      <option value=3>3</option>
-    </select>
-
-    <select class="right" v-model.number="right">
-      <option value=0>0</option>
-      <option value=1>1</option>
-      <option value=2>2</option>
-      <option value=3>3</option>
-    </select>
-
-    <v-stage :config="configKonva" ref="stage">
-      <v-layer ref="layer">
-        <div class="ttype">
-          <v-line :config="topLine"></v-line>
-          <v-line :config="middleLine"></v-line>
-          <v-line :config="bottomLine"></v-line>
-          <v-rect :config="rectLeft" v-for="n in left" :key="n" ref="rectLeft"></v-rect>
-          <v-rect :config="rectMid" v-for="n in middle" :key="10+n" ref="rectMid"></v-rect>
-          <v-rect :config="rectRight" v-for="n in right" :key="20+n" ref="rectRight"></v-rect>
-        </div>
-      </v-layer>
-    </v-stage>
-
-    <div class="formWrap">
-      <div class="leftWrap">
-        <h4 v-if="left > 0">Left branch</h4>
-        <ElementForm @element-values='handleLeftElementValues($event, i)' class="leftForm" v-for="(n, i) in left" :key="30+n"/>
-      </div>
-      <div class="middleWrap">
-        <h4 v-if="middle > 0">Middle branch</h4>
-        <ElementForm @element-values='handleMiddleElementValues($event, i)' class="middleForm" v-for="(n, i) in middle" :key="40+n"/>
-      </div>
-      <div class="rightWrap">
-        <h4 v-if="right > 0">Right branch</h4>
-        <ElementForm @element-values='handleRightElementValues($event, i)' class="rightForm" v-for="(n, i) in right" :key="50+n"/>
-      </div>
+      <select class="right" v-model.number="right" v-on:change="emitQuantity">
+        <option value=0>0</option>
+        <option value=1>1</option>
+        <option value=2>2</option>
+        <option value=3>3</option>
+      </select>
     </div>
-
-    <button v-on:click='saveCircuit' v-if='left>0 || right>0 || middle>0' type='button'>Save circuit</button>
-    <button v-on:click='sendSingleNetwork' v-if='connectionsNumber === 0 && (left>0 || right>0 || middle>0)' type='button'>Calculate</button>
-
-    <div class="connectionsForm">
-      <Connections @connection="handleConnecions($event, i)" v-for="(n, i) in connectionsNumber" :key="60+n"/>
+    <div class="canvas">
+      <v-stage :config="configKonva" ref="stage">
+        <v-layer ref="layer">
+          <div class="ttype">
+            <v-line :config="topLine"></v-line>
+            <v-line :config="middleLine"></v-line>
+            <v-line :config="bottomLine"></v-line>
+            <v-rect :config="rectLeft" v-for="n in left" :key="n" ref="rectLeft"></v-rect>
+            <v-rect :config="rectMid" v-for="n in middle" :key="10+n" ref="rectMid"></v-rect>
+            <v-rect :config="rectRight" v-for="n in right" :key="20+n" ref="rectRight"></v-rect>
+          </div>
+        </v-layer>
+      </v-stage>
     </div>
-    <button v-on:click='calculate' v-if='connectionsNumber > 0' type='button'>Calculate</button>
-
-    <FileUpload />
   </div>
 </template>
 
 <script>
-  import ElementForm from './ElementForm.vue'
-  import Connections from './Connections.vue'
-  import FileUpload from './FileUpload.vue'
-
   export default {
-    name: 'TType',
-    components: {
-      ElementForm,
-      Connections,
-      FileUpload
-    },
+    name: "TType",
     data() {
       return {
         middle: 0,
         left: 0,
         right: 0,
-        leftElements: [],
-        middleElements: [],
-        rightElements: [],
-        savedCircuit: [],
-        circuits: {},
-        circuitName: '',
-        connectionsNumber: 0,
-        connections: {},
-
-        configKonva: {
-          width: 2000,
-          height: 450
-        },
+        windowWidth: window.innerWidth,
+        windowHeight : window.innerHeight,
 
         rectLeft: {
-          x: 650,
+          x: 300,
           y: 25,
           width: 70,
           height: 30,
@@ -107,7 +60,7 @@
         },
 
         rectMid: {
-          x: 735,
+          x: 385,
           y: 60,
           width: 30,
           height: 70,
@@ -116,7 +69,7 @@
         },
 
         rectRight: {
-          x: 780,
+          x: 430,
           y: 25,
           width: 70,
           height: 30,
@@ -125,7 +78,7 @@
         },
 
         topLine: {
-          points: [430, 40, 1090, 40],
+          points: [100, 40, 700, 40],
           stroke: "black",
           strokeWidth: "round",
           lineCup: "round",
@@ -133,7 +86,7 @@
         },
 
         middleLine: {
-          points: [750, 40, 750, 360],
+          points: [400, 40, 400, 360],
           stroke: "black",
           strokeWidth: "round",
           lineCap: "round",
@@ -141,7 +94,7 @@
         },
 
         bottomLine: {
-          points: [430, 360, 1090, 360],
+          points: [100, 360, 700, 360],
         stroke: "black",
           strokeWidth: "round",
           lineCap: "round",
@@ -151,65 +104,35 @@
     },
 
     methods: {
-      handleLeftElementValues(value, index) {
-        this.leftElements[index] = value;
+      emitQuantity() {
+        var quantities = {};
+        quantities.left = this.left;
+        quantities.middle = this.middle;
+        quantities.right = this.right;
+
+        this.$emit('element-quantities', quantities)
       },
-
-      handleMiddleElementValues(value, index) {
-        this.middleElements[index] = value;
-      },
-
-      handleRightElementValues(value, index) {
-        this.rightElements[index] = value;
-      },
-
-      handleConnecions(type, index) {
-        this.connections[index] = type;
-        console.log(this.connections);
-      },
-
-      saveCircuit() {
-        this.savedCircuit.push(this.leftElements, this.middleElements, this.rightElements);
-        this.circuits[this.circuitName] = this.savedCircuit;
-
-        this.savedCircuit = [];
-        this.left = 0;
-        this.middle = 0;
-        this.right = 0;
-
-        this.connectionsNumber++
-      },
-      sendSingleNetwork() {
-        this.$http.post('www.test.com/test', {
-          elements: {
-            left: this.leftElements,
-            middle: this.middleElements,
-            right: this.rightElements
-          }
-        })
-          .then(function(response) {
-          })
-          .catch(function(error) {
-          });
-      },
-
-      calculate() {
-        this.$http.post('www.test.com/test2', {
-          circuits: {
-            circuits: this.circuits,
-            connections: this.connections
-          }
-        })
-          .then(function(response) {
-          })
-          .catch(function(error) {
-          });
-      }
     },
 
     computed: {
       leftNum: function() {
         return this.left;
+      },
+
+      configKonva: function() {
+        let windowHeight = this.windowHeight;
+        let windowWidth = this.windowWidth;
+
+        let scale = windowWidth/520;
+
+        let width = 250 * scale
+        let height = 120 * scale
+
+        return {
+          width: width,
+          height: height,
+          scale: { x: scale/4, y: scale/4 }
+        }
       }
     },
 
@@ -222,7 +145,7 @@
           var index = vm.$refs.rectLeft.length-1
           var distance = index * 100;
           if(vm.$refs.rectLeft.length > 0) {
-            vm.$refs.rectLeft[index].getStage().setAttr('x', 650-distance);
+            vm.$refs.rectLeft[index].getStage().setAttr('x', 300-distance);
           }
           vm.$refs.layer.getStage().draw();
         });
@@ -252,12 +175,19 @@
           var distance = index * 100;
 
           if(vm.$refs.rectRight.length > 0) {
-            vm.$refs.rectRight[index].getStage().setAttr('x', 780+distance);
+            vm.$refs.rectRight[index].getStage().setAttr('x', 430+distance);
           }
           vm.$refs.layer.getStage().draw();
         });
       }
     },
+
+    mounted() {
+      window.addEventListener('resize', () => {
+        this.windowWidth = window.innerWidth;
+        this.windowHeight = window.innerHeight;
+      });
+    }
   }
 </script>
 

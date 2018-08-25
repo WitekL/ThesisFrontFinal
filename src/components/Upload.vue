@@ -86,6 +86,7 @@
           //   this.currentStatus = STATUS_FAILED;
           // });
       },
+
       filesChange(fieldName, fileList) {
         // handle file changes
         // const formData = new FormData();
@@ -101,6 +102,7 @@
 
           this.showModal();
       },
+
       sendData(values) {
         for (var key in values) {
           this.params.append(key, values[key]);
@@ -108,6 +110,7 @@
         this.save(this.params);
       }
     },
+
     mounted() {
       this.reset();
     },

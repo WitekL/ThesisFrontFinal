@@ -5,7 +5,7 @@
       <option value="c">C</option>
       <option value="l">L</option>
     </select>
-    <input v-on:change="emitValues" type="text" name="Value" v-model.number="value">
+    <input v-on:change="emitValues" type="text" name="Value" v-model.number="value" size="4">
   </form>
 </template>
 
