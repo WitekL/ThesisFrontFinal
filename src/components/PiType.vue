@@ -137,45 +137,36 @@
     watch: {
       left: function() {
         var vm = this;
-        vm.$refs.layer.getStage().draw();
 
         setTimeout(function() {
-          var index = vm.$refs.rectLeft.length-1
-          var distance = index * 100;
+          vm.$refs.rectLeft[1].getStage().setAttr('y', 160);
+          vm.$refs.layer.getStage().draw();
 
-          if(vm.$refs.rectLeft.length > 0) {
-            vm.$refs.rectLeft[index].getStage().setAttr('y', 60+distance);
-          }
+          vm.$refs.rectLeft[2].getStage().setAttr('y', 260);
           vm.$refs.layer.getStage().draw();
         });
       },
 
       middle: function() {
         var vm = this;
-        vm.$refs.layer.getStage().draw();
 
         setTimeout(function() {
-          var index = vm.$refs.rectMid.length-1
-          var distance = index * 100;
+          vm.$refs.rectMid[1].getStage().setAttr('x', 350);
+          vm.$refs.layer.getStage().draw();
 
-          if(vm.$refs.rectMid.length > 0) {
-            vm.$refs.rectMid[index].getStage().setAttr('x', 250+distance);
-          }
+          vm.$refs.rectMid[2].getStage().setAttr('x', 450);
           vm.$refs.layer.getStage().draw();
         });
       },
 
       right: function() {
         var vm = this;
-        vm.$refs.layer.getStage().draw();
 
         setTimeout(function() {
-          var index = vm.$refs.rectRight.length-1
-          var distance = index * 100;
+          vm.$refs.rectRight[1].getStage().setAttr('y', 160);
+          vm.$refs.layer.getStage().draw();
 
-          if(vm.$refs.rectRight.length > 0) {
-            vm.$refs.rectRight[index].getStage().setAttr('y', 60+distance);
-          }
+          vm.$refs.rectRight[2].getStage().setAttr('y', 260);
           vm.$refs.layer.getStage().draw();
         });
       }
