@@ -31,7 +31,7 @@
       </div>
     </div>
 
-    <Modal v-show="modalVisibility" @close="hideModal" @send-params="sendKreatorData"></Modal>
+    <Modal v-show="modalVisibility" @close="hideModal" @send-params="sendKreatorData" creatorView="true"></Modal>
     <Help v-show="helpVisibility" @close="hideHelp"></Help>
 
     <div id="chart-panel">
@@ -109,7 +109,6 @@ export default {
     },
 
     handleLeftElementValues(value, index) {
-      // tutaj z jakiegoś powodu znika rodzaj elementu
       this.leftElements[index] = value;
     },
 
@@ -131,9 +130,11 @@ export default {
           right: this.rightElements
         },
         parameters: {
-          points_count: values['points_count'],
-          start_frequency: values['start_frequency'],
-          stop_frequency: values['stop_frequency']
+          pointsCount: values['points_count'],
+          startFrequency: values['start_frequency'],
+          stopFrequency: values['stop_frequency'],
+          firstSource: values['firstSource'],
+          secondSource: values['secondSource'],
         }
       })
         .then(function(response) {
