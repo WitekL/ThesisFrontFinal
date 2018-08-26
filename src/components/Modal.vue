@@ -34,12 +34,38 @@
             </div>
 
             <div class="values">
-              <input v-model.number="points" id="points" size="4"><br>
-              <input v-model.number="start" size="4"/>MHz<br>
-              <input v-model.number="stop" size="4"/>MHz
+              <input v-model.number="points" id="points" size="4"> <br>
+              <input v-model.number="start" size="4"/> MHz<br>
+              <input v-model.number="stop" size="4"/> MHz
             </div>
           </div>
         </section>
+        <div v-if="creatorView">
+          <section class="modal-body">
+            <h4> Source 1 </h4>
+            <div class="labels">
+              <p>Power:</p>
+              <p>Int. resist:</p>
+            </div>
+
+            <div class="values">
+              <input v-model.number="power1" class="power" size="4"> dBm<br>
+              <input v-model.number="intResi1" size="4"/> Ohm<br>
+            </div>
+          </section>
+          <section class="modal-body">
+            <h4> Source 2 </h4>
+            <div class="labels">
+              <p>Power:</p>
+              <p>Int. resist:</p>
+            </div>
+
+            <div class="values">
+              <input v-model.number="power2" class="power" size="4"> dBm<br>
+              <input v-model.number="intResi2" size="4"/> Ohm<br>
+            </div>
+          </section>
+        </div>
         <footer class="modal-footer">
           <div name="footer">
 
@@ -60,12 +86,17 @@
 
 <script>
   export default {
-    name: 'Modal',
+    name: "Modal",
+    props: ["creatorView"],
     data() {
       return {
         start: 10,
         stop: 11,
-        points: 100
+        points: 100,
+        power1: 0,
+        intResi1: 0,
+        power2: 0,
+        intResi2: 0
       }
     },
 
@@ -79,6 +110,19 @@
           stop_frequency: this.stop,
           points_count: this.points
         }
+
+
+        if (this.creatorView) {
+          let sources = {
+            firstSource:
+              { power: this.power1, resistance: this.intResi1},
+            secondSource:
+              { power: this.power2, resistance: this.intResi2}
+          }
+
+          simulation_parameters = Object.assign({}, simulation_parameters, sources)
+        }
+        console.log(simulation_parameters)
 
         this.$emit('send-params', simulation_parameters)
         this.close();
@@ -164,6 +208,12 @@
     margin-bottom: 16px;
     margin-top: 16px;
     margin-left: -32px;
+  }
+
+  .values .power {
+    margin-bottom: 16px;
+    margin-top: 16px;
+    margin-left: -3px;
   }
 
   .values input {

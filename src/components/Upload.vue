@@ -1,12 +1,11 @@
 <template>
   <div class="container">
-    <form enctype="multipart/form-data" novalidate v-if="isInitial || isSaving">
+    <form enctype="multipart/form-data" novalidate>
       <h1>Upload SPICE netlist</h1>
       <div class="dropbox">
-        <input type="file" :name="uploadFieldName" :disabled="isSaving" @change="filesChange($event.target.name,
+        <input type="file" :name="uploadFieldName" @change="filesChange($event.target.name,
         $event.target.files)" accept="*/*" class="input-file">
-        <p v-if="isInitial">
-          Drag your file here to begin<br> or click to browse
+        <p v-html="uploadText">
         </p>
       </div>
     </form>
@@ -16,38 +15,34 @@
 </template>
 
 <script>
-  import Modal from './Modal'
+import Modal from './Modal'
 
-  const STATUS_INITIAL = 0, STATUS_SAVING = 1, STATUS_SUCCESS = 2, STATUS_FAILED = 3;
+const STATUS_INITIAL = 0, STATUS_SAVING = 1, STATUS_SUCCESS = 2, STATUS_FAILED = 3;
 
-  export default {
-    name: 'Upload',
-    components: { Modal },
+export default {
+  name: 'Upload',
+  components: { Modal },
 
-    data() {
-      return {
-        uploadedFiles: [],
-        uploadError: null,
-        currentStatus: null,
-        uploadFieldName: 'netlist',
-        modalVisibility: false,
-        params: new FormData()
-      }
+  data() {
+    return {
+      uploadedFiles: [],
+      initialText: "Drag your file here to begin<br> or click to browse",
+      errorText: "An error has occured. Please refer to the help page for further information. <br>",
+      uploadText: "Drag your file here to begin<br> or click to browse",
+      uploadFieldName: 'netlist',
+      modalVisibility: false,
+      params: new FormData()
+    }
+  },
+
+  methods: {
+    isInitial() {
+      this.uploadText = this.initialText;
     },
-    computed: {
-      isInitial() {
-        return this.currentStatus === STATUS_INITIAL;
-      }, isSaving() {
-        return this.currentStatus === STATUS_SAVING;
-      },
-      isSuccess() {
-        return this.currentStatus === STATUS_SUCCESS;
-      },
-      isFailed() {
-        return this.currentStatus === STATUS_FAILED;
-      }
+
+    isFailed(error) {
+      this.uploadText = this.errorText + error;
     },
-    methods: {
 
     showModal() {
       this.modalVisibility = true;
@@ -56,65 +51,50 @@
     hideModal() {
       this.modalVisibility = false;
     },
-      reset() {
-        // reset form to initial state
-        this.currentStatus = STATUS_INITIAL;
-        this.uploadedFiles = [];
-        this.uploadError = null;
-      },
-      save(formData) {
-        const BASE_URL = 'http://127.0.0.1:3000/upload';
-        this.currentStatus = STATUS_SAVING;
 
-        this.$http.post(BASE_URL, formData)
-          .then(function(response) {
-            this.uploadedFiles = [].concat(x);
-            this.currentStatus = STATUS_SUCCESS;
-          })
-          .then(function(error) {
-            this.uploadError = err.response;
-            this.currentStatus = STATUS_FAILED;
-          });
+    reset() {
+      this.uploadedFiles = [];
+      this.uploadError = null;
+    },
 
-        // upload(formData);
-          // .then(x => {
-          //   this.uploadedFiles = [].concat(x);
-          //   this.currentStatus = STATUS_SUCCESS;
-          // })
-          // .catch(err => {
-          //   this.uploadError = err.response;
-          //   this.currentStatus = STATUS_FAILED;
-          // });
-      },
+    save(formData) {
+      let vm = this;
+      const BASE_URL = 'http://127.0.0.1:3000/upload';
+      this.currentStatus = STATUS_SAVING;
 
-      filesChange(fieldName, fileList) {
-        // handle file changes
-        // const formData = new FormData();
+      this.$http.post(BASE_URL, formData)
+      .then(function(response) {
+        vm.isInitial();
+      })
+      .catch(function(error) {
+        vm.isFailed(error);
+      });
+    },
 
-        if (!fileList.length) return;
+    filesChange(fieldName, fileList) {
+      if (!fileList.length) return;
 
-        // append the files to FormData
-        Array
-          .from(Array(fileList.length).keys())
-          .map(x => {
-            this.params.append(fieldName, fileList[x], fileList[x].name);
-          });
+      Array
+      .from(Array(fileList.length).keys())
+      .map(x => {
+        this.params.append(fieldName, fileList[x], fileList[x].name);
+      });
 
-          this.showModal();
-      },
+      this.showModal();
+    },
 
-      sendData(values) {
-        for (var key in values) {
-          this.params.append(key, values[key]);
-        }
-        this.save(this.params);
+    sendData(values) {
+      for (var key in values) {
+        this.params.append(key, values[key]);
       }
-    },
+      this.save(this.params);
+    }
+  },
 
-    mounted() {
-      this.reset();
-    },
-   }
+  mounted() {
+    this.reset();
+  },
+}
 </script>
 
 <style scoped>
