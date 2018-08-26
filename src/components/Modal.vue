@@ -122,7 +122,6 @@
 
           simulation_parameters = Object.assign({}, simulation_parameters, sources)
         }
-        console.log(simulation_parameters)
 
         this.$emit('send-params', simulation_parameters)
         this.close();

@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <button v-on:click="showHelp">Help</button>
+    <button class="help-button" v-on:click="showHelp">Help</button>
     <div id='circuit-panel'>
       <div class="scheme-type" @change="clearValues">
         <label>Pi</label><input type="radio" v-model="viewType" value="Pi">
@@ -9,7 +9,7 @@
       </div>
       <PiType v-if="viewType === 'Pi'" @element-quantities="handleElementQuantities($event)"></PiType>
       <TType v-if="viewType === 'T'" @element-quantities="handleElementQuantities($event)"></TType>
-      <Upload v-if="viewType === 'Upload'"></Upload>
+      <Upload v-if="viewType === 'Upload'" v-on:fileForDownload="serveFile"></Upload>
 
       <div class="formWrap">
         <div class="leftWrap">
@@ -37,8 +37,9 @@
     <div id="chart-panel">
       <Chart :width="850" :height="680"/>
     </div>
-    <div id='results'>
 
+    <div class="file-download" v-if="downloadFile">
+      <a download v-bind:href="url">Download touchstone</a>
     </div>
 
   </div>
@@ -75,11 +76,17 @@ export default {
       rightElements: [],
       modalVisibility: false,
       helpVisibility: false,
-      params: new FormData()
+      params: new FormData(),
+      url: '',
+      downloadFile: null
     }
   },
 
   methods: {
+    serveFile(data) {
+      this.downloadFile = data;
+      this.url = window.URL.createObjectURL(data);
+    },
     clearValues() {
       this.left = 0;
       this.middle = 0;
@@ -122,6 +129,8 @@ export default {
 
     sendKreatorData(values) {
       // TODO: HERE CHANGE THE BACKEND URL
+      let vm = this;
+
       this.$http.post('www.test.com/test', {
         schehmatic: this.viewType,
         elements: {
@@ -138,6 +147,7 @@ export default {
         }
       })
         .then(function(response) {
+          vm.serveFile(response.data.file);
         })
         .catch(function(error) {
         });
@@ -210,5 +220,29 @@ export default {
     clear: both;
     text-align: center;
     margin-right: 30px;
+  }
+
+  .file-download {
+    background: #4AAE9B;
+    padding: 5px;
+    border-radius: 35px;
+    width: 8%;
+    margin: 0 auto;
+  }
+
+  .file-download a {
+    text-decoration: none;
+    color: white;
+  }
+
+  .help-button {
+    margin-bottom: 25px;
+    background: #4AAE9B;
+    text-decoration: none;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 35px;
+    cursor: pointer;
   }
 </style>
