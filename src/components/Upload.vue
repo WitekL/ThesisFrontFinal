@@ -64,11 +64,17 @@ export default {
 
       this.$http.post(BASE_URL, formData)
       .then(function(response) {
+        vm.prepareDownload(response);
         vm.isInitial();
       })
       .catch(function(error) {
         vm.isFailed(error);
       });
+    },
+
+    prepareDownload(data) {
+      let blob = new Blob([data.data.file], { type: "octet/stream"});
+      this.$emit("fileForDownload", blob);
     },
 
     filesChange(fieldName, fileList) {
