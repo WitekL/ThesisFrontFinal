@@ -9,7 +9,7 @@
       </div>
       <PiType v-if="viewType === 'Pi'" @element-quantities="handleElementQuantities($event)"></PiType>
       <TType v-if="viewType === 'T'" @element-quantities="handleElementQuantities($event)"></TType>
-      <Upload v-if="viewType === 'Upload'" v-on:fileForDownload="serveFile"></Upload>
+      <Upload v-if="viewType === 'Upload'" v-on:fileForDownload="serveFile" v-on:dataForChart="feedDataToChart"></Upload>
 
       <div class="formWrap">
         <div class="leftWrap">
@@ -35,7 +35,7 @@
     <Help v-show="helpVisibility" @close="hideHelp"></Help>
 
     <div id="chart-panel">
-      <Chart :width="850" :height="680"/>
+      <Chart :width="850" :height="680" v-bind:chart-data="chartData"/>
     </div>
 
     <div class="file-download" v-if="downloadFile">
@@ -78,11 +78,15 @@ export default {
       helpVisibility: false,
       params: new FormData(),
       url: '',
-      downloadFile: null
+      downloadFile: null,
+      chartData: []
     }
   },
 
   methods: {
+    feedDataToChart(data) {
+      this.chartData = data;
+    },
     serveFile(data) {
       this.downloadFile = data;
       this.url = window.URL.createObjectURL(data);
@@ -131,7 +135,7 @@ export default {
       // TODO: HERE CHANGE THE BACKEND URL
       let vm = this;
 
-      this.$http.post('www.test.com/test', {
+      this.$http.post('http://127.0.0.1:3000/creator', {
         schehmatic: this.viewType,
         elements: {
           left: this.leftElements,
