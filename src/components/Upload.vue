@@ -36,6 +36,17 @@ export default {
   },
 
   methods: {
+    prepareData(data) {
+      delete data.file
+
+      for(var key in data) {
+        data[key] = data[key].map(function(item) {
+          return Number(item);
+        })
+      }
+
+      return data
+    },
     isInitial() {
       this.uploadText = this.initialText;
     },
@@ -65,6 +76,10 @@ export default {
       this.$http.post(BASE_URL, formData)
       .then(function(response) {
         vm.prepareDownload(response);
+
+        let preparedData = vm.prepareData(response.data)
+
+        vm.$emit("dataForChart", preparedData)
         vm.isInitial();
       })
       .catch(function(error) {
