@@ -131,12 +131,24 @@ export default {
       this.rightElements[index] = value;
     },
 
+    prepareData(data) {
+      delete data.file
+
+      for(var key in data) {
+        data[key] = data[key].map(function(item) {
+          return Number(item);
+        })
+      }
+
+      return data
+    },
+
     sendKreatorData(values) {
       // TODO: HERE CHANGE THE BACKEND URL
       let vm = this;
 
       this.$http.post('http://127.0.0.1:3000/creator', {
-        schehmatic: this.viewType,
+        schematic: this.viewType,
         elements: {
           left: this.leftElements,
           middle: this.middleElements,
@@ -151,7 +163,11 @@ export default {
         }
       })
         .then(function(response) {
-          vm.serveFile(response.data.file);
+          let blob = new Blob([response.data.file], { type: "octet/stream"});
+          vm.serveFile(blob);
+
+          let preparedData = vm.prepareData(response.data)
+          vm.feedDataToChart(preparedData)
         })
         .catch(function(error) {
         });
