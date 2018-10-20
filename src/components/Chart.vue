@@ -41,8 +41,7 @@ export default {
           label: 'a12',
           data: [],
           fill: false,
-          borderColor: 'red',
-          borderDash: [5, 5]
+          borderColor: 'orange',
         },
         {
           label: 'a21',
@@ -51,17 +50,10 @@ export default {
           borderColor: 'blue'
         },
         {
-          label: 'Re22',
+          label: 'a22',
           data: [],
           fill: false,
-          borderColor: 'orange'
-        },
-        {
-          label: 'Im22',
-          data: [],
-          fill: false,
-          borderColor: 'orange',
-          borderDash: [5, 5]
+          borderColor: 'green'
         }
       ],
       scales: {
