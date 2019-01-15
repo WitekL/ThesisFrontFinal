@@ -124,7 +124,7 @@
         let scale = windowWidth/520;
 
         let width = 250 * scale
-        let height = 120 * scale
+        let height = 110 * scale
 
         return {
           width: width,

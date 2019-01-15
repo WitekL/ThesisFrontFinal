@@ -144,7 +144,6 @@ export default {
     },
 
     sendKreatorData(values) {
-      // TODO: HERE CHANGE THE BACKEND URL
       let vm = this;
 
       this.$http.post('http://127.0.0.1:3000/creator', {
@@ -162,15 +161,15 @@ export default {
           secondSource: values['secondSource'],
         }
       })
-        .then(function(response) {
-          let blob = new Blob([response.data.file], { type: "octet/stream"});
-          vm.serveFile(blob);
+      .then(function(response) {
+        let blob = new Blob([response.data.file], { type: "octet/stream"});
+        vm.serveFile(blob);
 
-          let preparedData = vm.prepareData(response.data)
-          vm.feedDataToChart(preparedData)
-        })
-        .catch(function(error) {
-        });
+        let preparedData = vm.prepareData(response.data)
+        vm.feedDataToChart(preparedData)
+      })
+      .catch(function(error) {
+      });
     }
   }
 }
@@ -198,16 +197,19 @@ export default {
   .leftWrap {
     float: left;
     margin: 20px;
+    margin-top: 0px;
   }
 
   .middleWrap {
     float: left;
     margin: 20px;
+    margin-top: 0px;
   }
 
   .rightWrap {
     float: left;
     margin: 20px;
+    margin-top: 0px;
   }
 
   .scheme-type {
@@ -264,5 +266,11 @@ export default {
     padding: 5px 10px;
     border-radius: 35px;
     cursor: pointer;
+  }
+
+  #select:before {
+    content: 'Elements quantity on each corresponding branch ';
+    display: block;
+    margin-top: 10px;
   }
 </style>

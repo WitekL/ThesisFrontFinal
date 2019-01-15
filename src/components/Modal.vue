@@ -29,8 +29,8 @@
         >
           <div name="body">
             <div class="labels">
-              <p>No. of points:</p>
-              <p>Freq. range:</p>
+              <p>No. of analysed frequency points:</p>
+              <p>Starting and ending frequency:</p>
             </div>
 
             <div class="values">
@@ -44,20 +44,22 @@
           <section class="modal-body">
             <h4> Source 1 </h4>
             <div class="labels">
-              <p>Power:</p>
-              <p>Int. resist:</p>
+              <p>Output power connected to the first port:</p>
+              <p>Its internal resistance:</p>
             </div>
 
             <div class="values">
               <input v-model.number="power1" class="power" size="4"> dBm<br>
               <input v-model.number="intResi1" size="4"/> Ohm<br>
             </div>
+
+            <div class="clear"></div>
           </section>
           <section class="modal-body">
             <h4> Source 2 </h4>
             <div class="labels">
-              <p>Power:</p>
-              <p>Int. resist:</p>
+              <p>Output power connected to the second port:</p>
+              <p>Its internal resistance:</p>
             </div>
 
             <div class="values">
@@ -90,13 +92,13 @@
     props: ["creatorView"],
     data() {
       return {
-        start: 10,
-        stop: 11,
-        points: 100,
+        start: 0.1,
+        stop: 0.9,
+        points: 20,
         power1: 0,
-        intResi1: 0,
+        intResi1: 50,
         power2: 0,
-        intResi2: 0
+        intResi2: 50
       }
     },
 
@@ -149,6 +151,7 @@
     overflow-x: auto;
     display: flex;
     flex-direction: column;
+    max-width: 1400px;
   }
 
   .modal-header,
@@ -203,6 +206,11 @@
     text-align: left;
   }
 
+  .values {
+    float: right;
+    margin-left: 20px;
+  }
+
   .values #points {
     margin-bottom: 16px;
     margin-top: 16px;
@@ -217,5 +225,9 @@
 
   .values input {
     margin-bottom: 5px;
+  }
+
+  .clear {
+    clear: both;
   }
 </style>
