@@ -15,9 +15,8 @@ export default {
     chartData: function() {
       let chart = this.$data._chart;
 
-      chart.data.labels = this.chartData.freq
+      chart.data.labels = this.chartData.freq.map(function(x) { return (x / 1000000).toFixed(2); });
 
-      console.log(this.chartData)
       chart.data.datasets[0].data = this.chartData["a11"]
       chart.data.datasets[1].data = this.chartData["a12"]
       chart.data.datasets[2].data = this.chartData["a21"]
@@ -32,33 +31,38 @@ export default {
       labels: [],
       datasets: [
         {
-          label: 'a11',
+          label: 's11',
           data: [],
           fill: false,
           borderColor: 'red'
         },
         {
-          label: 'a12',
+          label: 's12',
           data: [],
           fill: false,
           borderColor: 'orange',
         },
         {
-          label: 'a21',
+          label: 's21',
           data: [],
           fill: false,
           borderColor: 'blue'
         },
         {
-          label: 'a22',
+          label: 's22',
           data: [],
           fill: false,
           borderColor: 'green'
         }
-      ],
+      ]
+    },
+    {
       scales: {
         xAxes: [{
-          type: 'logarithmic'
+          scaleLabel: {
+            display: true,
+            labelString: 'Frequency [MHz]',
+          }
         }]
       }
     })
